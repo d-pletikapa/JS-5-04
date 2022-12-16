@@ -113,7 +113,7 @@ console.log(data);
     const footer = document.createElement('footer');
     footer.classList.add('footer');
     const footerContainer = createContainer();
-    footerContainer.textContent = `разработчик: Дэнис П.`;
+    footerContainer.textContent = `разработчик: Дэнис ©`;
     footer.append(footerContainer);
 
     footer.footerContainer = footerContainer;

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		.btn-1 {
+			background-color: blue;
+		}
+
+		.btn-2 {
+			background-color: red;
+		}
+	</style>
+
+</head>
+
+<body>
+	<h1>События</h1>
+	<button type="button" class="btn-1">Клик</button>
+	<button type="button" class="btn-2">Тык</button>
+	<script defer>
+		const foo = () => {
+			alert('БУм');
+		};
+		// 'use strict';
+		const btnOne = document.querySelector('.btn-1');
+		const btnTwo = document.querySelector('.btn-2');
+
+		// btnOne.onclick = () => {
+		// 	alert('тыдыщ');
+		// };
+
+		// btnTwo.onclick = foo;
+
+		btnOne.addEventListener('click', () => {
+			alert('Обработчик событий добавлен');
+		});
+		btnOne.addEventListener('click', foo);
+		btnOne.removeEventListener('click', foo); // удаляет только туже функцию по ссылке
+
+		//Объект обработчика событий
+		btnOne.addEventListener('click', event => {
+			console.log(event.clientX);
+			console.log(event.clientY);
+			console.log(event);
+			event.preventDefault();
+		});
+
+    /*
+        const objEvent = {
+          handleEvent() {
+            formOverlay.classList.add('is-visible');
+          },
+        }
+
+          btnAdd.addEventListener('click', objEvent
+            // можно добавить как функцию, так и объект-обработчик, внутри которого будет метод.
+              {
+              handleEvent() {
+                  formOverlay.classList.add('is-visible');
+              }
+           // функция:
+              () => {
+              formOverlay.classList.add('is-visible');
+              }
+           )};
+     */
+	</script>
+</body>
+
+</html>

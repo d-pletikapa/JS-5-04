@@ -1,8 +1,6 @@
 'use strict';
 import {data} from "/data.js";
 
-console.log(data);
-
 {
   const createContainer = () => {
     const container = document.createElement('div');
@@ -147,10 +145,12 @@ console.log(data);
     const footer = createFooter();
 
     app.append(header, main, footer);
-
+    console.log(buttonGroup);
     return {
       list: table.tbody,
-      // footer: footer,
+      logo,
+      btnAdd: buttonGroup.buttons[0],
+      formOverlay: form.overlay,
     }
   };
 
@@ -171,6 +171,7 @@ console.log(data);
     const phoneLink = document.createElement('a');
     phoneLink.href = `tel:${phone} `
     phoneLink.textContent = phone;
+    tr.phoneLink = phoneLink;
     tdPhone.append(phoneLink);
     tr.append(tdDel, tdName, tdSurname, tdPhone);
     return tr;
@@ -179,16 +180,58 @@ console.log(data);
   const renderContacts = (elem, data) => {
     const allRow = data.map(createRow);
     elem.append(...allRow);
+    return allRow;
   };
+
+  const hoverRow = (allRow, logo) => {
+    const text = logo.textContent;
+    allRow.forEach(contact => {
+      contact.addEventListener('mouseenter', () => {
+        logo.textContent = contact.phoneLink.textContent;
+      });
+      contact.addEventListener('mouseleave', () => {
+        logo.textContent = text;
+      });
+    });
+  };
+
 
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
     const phoneBook = renderPhoneBook(app, title);
-    const {list} = phoneBook;
-    renderContacts(list, data);
-
+    const {list, logo, btnAdd, formOverlay} = phoneBook;
     //Функционал
-  };
+    const allRow = renderContacts(list, data);
+    hoverRow(allRow, logo);
+
+    const objEvent = {
+      a:1,
+      b:10,
+      handleEvent(event) {
+        if (event.ctrlKey) {
+          this.bar();
+        } else {
+          this.foo();
+        }
+      },
+      bar() {
+      document.body.style.background = 'black';
+      },
+      foo () {
+        formOverlay.classList.add('is-visible');
+      }
+    }
+    btnAdd.addEventListener('click', objEvent
+    //   можно добавить как функцию, так и объект-обработчик, внутри которого будет метод.
+    //   {
+    //   handleEvent() {
+    //       formOverlay.classList.add('is-visible');
+    //   }
+    //   функция:
+    //   () => {
+    //   formOverlay.classList.add('is-visible');
+    //   }
+    )};
 
   window.phoneBookInit = init;
 }

@@ -106,7 +106,6 @@ import {data} from "/data.js";
     };
   };
 
-
   const createFooter = () => {
     const footer = document.createElement('footer');
     footer.classList.add('footer');
@@ -125,7 +124,7 @@ import {data} from "/data.js";
     const main = createMain();
     const buttonGroup = createButtonsGroup([
       {
-        className: 'btn btn-primary mr-3',
+        className: 'btn btn-primary mr-3 js-add',
         type: 'button',
         text: 'Добавить',
       },
@@ -137,6 +136,7 @@ import {data} from "/data.js";
     ]);
     const table = createTable();
     const form = createForm();
+    const btnClose = form.form.querySelector('.close');
 
     header.headerContainer.append(logo);
     // main.mainContainer.append(buttonGroup);
@@ -145,12 +145,14 @@ import {data} from "/data.js";
     const footer = createFooter();
 
     app.append(header, main, footer);
-    console.log(buttonGroup);
+    console.log(btnClose);
     return {
       list: table.tbody,
       logo,
       btnAdd: buttonGroup.buttons[0],
       formOverlay: form.overlay,
+      form: form.form,
+      btnClose: btnClose,
     }
   };
 
@@ -169,11 +171,20 @@ import {data} from "/data.js";
     tdSurname.textContent = surname;
     const tdPhone = document.createElement('td');
     const phoneLink = document.createElement('a');
+
+    // Добавить в каждую строку кнопку редактировать (на кнопке текст или иконка на ваше усмотрение)
+    const tdEdit = document.createElement('td');
+    const buttonEdit = document.createElement('button');
+    buttonEdit.textContent = 'Редактировать';
+    buttonEdit.classList.add('edit', 'btn', 'btn-primary');
+    tdEdit.append(buttonEdit);
+    // Не обязательное: +1 балл
+
     phoneLink.href = `tel:${phone} `
     phoneLink.textContent = phone;
     tr.phoneLink = phoneLink;
     tdPhone.append(phoneLink);
-    tr.append(tdDel, tdName, tdSurname, tdPhone);
+    tr.append(tdDel, tdName, tdSurname, tdPhone, tdEdit);
     return tr;
   };
 
@@ -195,43 +206,43 @@ import {data} from "/data.js";
     });
   };
 
-
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
     const phoneBook = renderPhoneBook(app, title);
-    const {list, logo, btnAdd, formOverlay} = phoneBook;
+    const {list, logo, btnAdd, formOverlay, form, btnClose} = phoneBook;
     //Функционал
     const allRow = renderContacts(list, data);
     hoverRow(allRow, logo);
 
-    const objEvent = {
-      a:1,
-      b:10,
-      handleEvent(event) {
-        if (event.ctrlKey) {
-          this.bar();
-        } else {
-          this.foo();
-        }
-      },
-      bar() {
-      document.body.style.background = 'black';
-      },
-      foo () {
-        formOverlay.classList.add('is-visible');
-      }
-    }
-    btnAdd.addEventListener('click', objEvent
-    //   можно добавить как функцию, так и объект-обработчик, внутри которого будет метод.
-    //   {
-    //   handleEvent() {
-    //       formOverlay.classList.add('is-visible');
-    //   }
-    //   функция:
-    //   () => {
-    //   formOverlay.classList.add('is-visible');
-    //   }
-    )};
+    btnAdd.addEventListener('click', () => {
+      formOverlay.classList.add('is-visible');
+    });
 
+    form.addEventListener('click', event => {
+      event.stopPropagation(); // плохая практика, технология делегирования - лучше
+    });
+
+    formOverlay.addEventListener('click', () => {
+      formOverlay.classList.remove('is-visible');
+    });
+
+    btnClose.addEventListener('click', () => {
+      formOverlay.classList.remove('is-visible');
+    });
+    //targetTouches
+    //touches
+    //changedTouches
+    document.addEventListener('touchstart', (e) => {
+      console.log(e.type);
+    });
+
+    document.addEventListener('touchmove', (e) => {
+      console.log(e.type);
+    });
+
+    document.addEventListener('touchend', (e) => {
+      console.log(e.type);
+    });
+  };
   window.phoneBookInit = init;
 }

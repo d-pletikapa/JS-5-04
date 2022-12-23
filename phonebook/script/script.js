@@ -145,11 +145,11 @@ import {data} from "/data.js";
     const footer = createFooter();
 
     app.append(header, main, footer);
-    console.log(btnClose);
     return {
       list: table.tbody,
       logo,
       btnAdd: buttonGroup.buttons[0],
+      btnDel: buttonGroup.buttons[1],
       formOverlay: form.overlay,
       form: form.form,
       btnClose: btnClose,
@@ -158,6 +158,7 @@ import {data} from "/data.js";
 
   const createRow = ({name:firstName, surname, phone}) => {
     const tr = document.createElement('tr');
+    tr.classList.add('contact');
 
     const tdDel = document.createElement('td');
     tdDel.classList.add('delete');
@@ -209,7 +210,15 @@ import {data} from "/data.js";
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
     const phoneBook = renderPhoneBook(app, title);
-    const {list, logo, btnAdd, formOverlay, form, btnClose} = phoneBook;
+    const {
+      list,
+      logo,
+      btnAdd,
+      formOverlay,
+      form,
+      btnClose,
+      btnDel,
+    } = phoneBook;
     //Функционал
     const allRow = renderContacts(list, data);
     hoverRow(allRow, logo);
@@ -218,12 +227,14 @@ import {data} from "/data.js";
       formOverlay.classList.add('is-visible');
     });
 
-    form.addEventListener('click', event => {
-      event.stopPropagation(); // плохая практика, технология делегирования - лучше
-    });
-
-    formOverlay.addEventListener('click', () => {
-      formOverlay.classList.remove('is-visible');
+    formOverlay.addEventListener('click', (e) => {
+      const target = e.target;
+      if (target === formOverlay || target === target.closest('.close')
+      //.classList.contains('close')
+        // btnClose
+      ) {
+        formOverlay.classList.remove('is-visible');
+      }
     });
 
     btnClose.addEventListener('click', () => {
@@ -243,6 +254,19 @@ import {data} from "/data.js";
     document.addEventListener('touchend', (e) => {
       console.log(e.type);
     });
+
+    btnDel.addEventListener('click', () => {
+      document.querySelectorAll('.delete').forEach(del => {
+        del.classList.toggle('is-visible');
+      })
+    })
+
+    list.addEventListener('click', e => {
+      const target = e.target;
+      if (target.closest('.del-icon')) {
+        target.closest('.contact').remove();
+      }
+    })
   };
   window.phoneBookInit = init;
 }

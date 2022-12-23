@@ -153,6 +153,7 @@ import {data} from "/data.js";
       formOverlay: form.overlay,
       form: form.form,
       btnClose: btnClose,
+      thead: table.firstChild, //table.thead
     }
   };
 
@@ -207,6 +208,21 @@ import {data} from "/data.js";
     });
   };
 
+  const sort = (sortBy) => {
+
+      data.sort(function (a, b) {
+        if (`a.${sortBy}` < `b.${sortBy}`) {
+          return -1;
+        }
+        if (`a.${sortBy}` > `b.${sortBy}`) {
+          return 1;
+        }
+        return 0;
+      });
+
+    console.log(data);
+  };
+
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
     const phoneBook = renderPhoneBook(app, title);
@@ -218,6 +234,7 @@ import {data} from "/data.js";
       form,
       btnClose,
       btnDel,
+      thead,
     } = phoneBook;
     //Функционал
     const allRow = renderContacts(list, data);
@@ -240,20 +257,6 @@ import {data} from "/data.js";
     btnClose.addEventListener('click', () => {
       formOverlay.classList.remove('is-visible');
     });
-    //targetTouches
-    //touches
-    //changedTouches
-    document.addEventListener('touchstart', (e) => {
-      console.log(e.type);
-    });
-
-    document.addEventListener('touchmove', (e) => {
-      console.log(e.type);
-    });
-
-    document.addEventListener('touchend', (e) => {
-      console.log(e.type);
-    });
 
     btnDel.addEventListener('click', () => {
       document.querySelectorAll('.delete').forEach(del => {
@@ -267,6 +270,20 @@ import {data} from "/data.js";
         target.closest('.contact').remove();
       }
     })
+
+    thead.addEventListener('click', e => {
+      const target = e.target;
+      if (target.textContent === 'Имя') {
+        sort('name');
+        list.innerHTML = '';
+        renderContacts(list, data);
+      } else if (target.textContent === 'Фамилия') {
+        sort('surname');
+        list.innerHTML = '';
+        renderContacts(list, data);
+      }
+    })
+    console.log();
   };
   window.phoneBookInit = init;
 }

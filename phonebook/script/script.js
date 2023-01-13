@@ -5,26 +5,27 @@
   // JS-5-08 Необходимо добавлять контакты в localStorage, из js удалить их
 // Для работы с localStorage написать три функции
 // 1) getStorage которая получает в виде аргумента
-// ключ и по нему запрашивает данные из localStorage и возвращает их,
+// ключ и по нему =>запрашивает данные из localStorage и возвращает их,
 // если их нет то возвращает пустой массив
-  const getStorage = (key) => {
-    let data;
-    if (localStorage.getItem(key) !== null) {
-      data = JSON.parse(localStorage.getItem(`${key}`));
-    } else {
-      data = [];
-    }
-    return data;
-  };
+  const getStorage = key => JSON.parse(localStorage.getItem(key)) || [];
+  // const getStorage = (key) => {
+  //   let data;
+  //   if (localStorage.getItem(key) !== null) {
+  //     data = JSON.parse(localStorage.getItem(`${key}`));
+  //   } else {
+  //     data = [];
+  //   }
+  //   return data;
+  // };
 
   // 2) setStorage получает ключ и объект в виде аргументов и дописывает
   // данные в localStorage
   // для этого с помощью getStorage необходимо данные получить,
   // дописать объект в массив и отправить после этого данные в localStorage
   const setStorage = (key, obj) => {
-    const data = getStorage(`${key}`);
+    const data = getStorage(key);
     data.push(obj);
-    localStorage.setItem(`${key}`, JSON.stringify(data));
+    localStorage.setItem(key, JSON.stringify(data));
   };
 
   // 3) removeStorage получает в виде аргумента номер телефона,
@@ -274,7 +275,6 @@
 
   const sort = (sortBy) => {
     const data = getStorage('contacts');
-    console.log(data);
     data.sort((a, b) => {
       if (`a.${sortBy}` < `b.${sortBy}`) {
         return -1;
@@ -284,7 +284,6 @@
       }
       return 0;
     });
-    console.log(data);
     localStorage.removeItem('contacts');
     localStorage.setItem('contacts', JSON.stringify(data));
   };
@@ -347,7 +346,6 @@
       e.preventDefault();
       const formData = new FormData(e.target);
       const newContact = Object.fromEntries(formData);
-      console.log(newContact);
       addContactPage(newContact, list);
 
       setStorage('contacts', newContact);

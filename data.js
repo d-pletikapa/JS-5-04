@@ -20,3 +20,5 @@ export const data = [
     phone: '+79876543210',
   },
 ];
+
+// localStorage.setItem('contacts', JSON.stringify(data));

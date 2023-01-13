@@ -1,11 +1,66 @@
 'use strict';
-import {data} from "/data.js";
+// import {data} from "/data.js";
 
 {
-  const addContactData = (contact) => {
-    data.push(contact);
-    console.log("-> data", data);
-  }
+  // JS-5-08 Необходимо добавлять контакты в localStorage, из js удалить их
+// Для работы с localStorage написать три функции
+// 1) getStorage которая получает в виде аргумента
+// ключ и по нему запрашивает данные из localStorage и возвращает их,
+// если их нет то возвращает пустой массив
+  const getStorage = (key) => {
+    let data;
+    if (localStorage.getItem(key) !== null) {
+      data = JSON.parse(localStorage.getItem(`${key}`));
+    } else {
+      data = [];
+    }
+    return data;
+  };
+
+  // 2) setStorage получает ключ и объект в виде аргументов и дописывает
+  // данные в localStorage
+  // для этого с помощью getStorage необходимо данные получить,
+  // дописать объект в массив и отправить после этого данные в localStorage
+  const setStorage = (key, obj) => {
+    const data = getStorage(`${key}`);
+    data.push(obj);
+    localStorage.setItem(`${key}`, JSON.stringify(data));
+  };
+
+  // 3) removeStorage получает в виде аргумента номер телефона,
+  // и удаляет контакт из localStorage,
+  // с логикой необходимо разобраться самостоятельно!
+  const removeStorage = (phone) => {
+    let data = getStorage('contacts');
+    // удаляет все совпадения
+    data = data.filter((item) => item.phone !== phone);
+    // for (let item of data) {
+    //   if (item.phone === phone) {
+    //     data.splice(data.indexOf(item), 1);
+    //   }
+    // }
+
+    // for (let key in data) {
+    //   if (data[key].phone === phone) {
+    //     data.splice(key, 1);
+    //   }
+    // }
+
+    localStorage.removeItem('contacts');
+    localStorage.setItem('contacts', JSON.stringify(data));
+  };
+
+  // Применить функции там где это необходимо
+  // Проверить весь функционал, после перезагрузки страницы,
+  // данные должны оставаться в таблице
+  //  +1 балл
+  // Если делали доп задание в уроке “События — Делегирование” с сортировкой,
+  // то необходимо запомнить по какому полю была выполнена сортировка
+  // и после перезагрузки страницы она должна сохранятся
+
+  // const addContactData = (contact) => {
+  //   data.push(contact);
+  // };
   const createContainer = () => {
     const container = document.createElement('div');
     container.classList.add('container');
@@ -155,13 +210,13 @@ import {data} from "/data.js";
       btnAdd: buttonGroup.buttons[0],
       btnDel: buttonGroup.buttons[1],
       formOverlay: overlay,
-      form: form,
-      btnClose: btnClose,
-      thead: table.firstChild, //table.thead
-    }
+      form,
+      btnClose,
+      thead: table.firstChild, // table.thead
+    };
   };
 
-  const createRow = ({name:firstName, surname, phone}) => {
+  const createRow = ({name: firstName, surname, phone}) => {
     const tr = document.createElement('tr');
     tr.classList.add('contact');
 
@@ -178,7 +233,8 @@ import {data} from "/data.js";
     const tdPhone = document.createElement('td');
     const phoneLink = document.createElement('a');
 
-    // Добавить в каждую строку кнопку редактировать (на кнопке текст или иконка на ваше усмотрение)
+    // Добавить в каждую строку кнопку редактировать
+    // (на кнопке текст или иконка на ваше усмотрение)
     const tdEdit = document.createElement('td');
     const buttonEdit = document.createElement('button');
     buttonEdit.textContent = 'Редактировать';
@@ -186,7 +242,7 @@ import {data} from "/data.js";
     tdEdit.append(buttonEdit);
     // Не обязательное: +1 балл
 
-    phoneLink.href = `tel:${phone} `
+    phoneLink.href = `tel:${phone} `;
     phoneLink.textContent = phone;
     tr.phoneLink = phoneLink;
     tdPhone.append(phoneLink);
@@ -195,14 +251,18 @@ import {data} from "/data.js";
   };
 
   const renderContacts = (elem, data) => {
-    const allRow = data.map(createRow);
-    elem.append(...allRow);
-    return allRow;
+    try {
+      const allRow = data?.map(createRow);
+      elem.append(...allRow);
+      return allRow;
+    } catch {
+      console.log('no data saved to render');
+    }
   };
 
   const hoverRow = (allRow, logo) => {
     const text = logo.textContent;
-    allRow.forEach(contact => {
+    allRow?.forEach(contact => {
       contact.addEventListener('mouseenter', () => {
         logo.textContent = contact.phoneLink.textContent;
       });
@@ -213,77 +273,91 @@ import {data} from "/data.js";
   };
 
   const sort = (sortBy) => {
-
-      data.sort(function (a, b) {
-        if (`a.${sortBy}` < `b.${sortBy}`) {
-          return -1;
-        }
-        if (`a.${sortBy}` > `b.${sortBy}`) {
-          return 1;
-        }
-        return 0;
-      });
-
+    const data = getStorage('contacts');
     console.log(data);
+    data.sort((a, b) => {
+      if (`a.${sortBy}` < `b.${sortBy}`) {
+        return -1;
+      }
+      if (`a.${sortBy}` > `b.${sortBy}`) {
+        return 1;
+      }
+      return 0;
+    });
+    console.log(data);
+    localStorage.removeItem('contacts');
+    localStorage.setItem('contacts', JSON.stringify(data));
   };
 
   const modalControl = (btnAdd, formOverlay) => {
     const openModal = () => {
       formOverlay.classList.add('is-visible');
+      // добавил скрытие кнопок удалить при открытии модального окна
+      document.querySelectorAll('.delete').forEach(del => {
+        if (del.classList.contains('is-visible')) {
+          del.classList.remove('is-visible');
+        }
+      });
     };
 
     const closeModal = () => {
       formOverlay.classList.remove('is-visible');
     };
 
-    btnAdd.addEventListener('click', openModal
+    btnAdd.addEventListener('click', openModal,
     );
 
     formOverlay.addEventListener('click', (e) => {
       const target = e.target;
       if (target === formOverlay || target === target.closest('.close')
-        //target.classList.contains('close')
-        // btnClose
+      // target.classList.contains('close')
+      // btnClose
       ) {
         closeModal();
       }
     });
     return {
       closeModal,
-    }
+    };
   };
   const deleteControl = (btnDel, list) => {
     btnDel.addEventListener('click', () => {
       document.querySelectorAll('.delete').forEach(del => {
         del.classList.toggle('is-visible');
-      })
-    })
+      });
+    });
 
     list.addEventListener('click', e => {
       const target = e.target;
       if (target.closest('.del-icon')) {
         target.closest('.contact').remove();
+        // удаляем контакт из localStorage по номеру телефона
+        const delPhone = target.closest('.contact')
+            .children[3].innerText;
+        removeStorage(delPhone);
       }
-    })
+    });
   };
 
   const addContactPage = (contact, list) => {
     list.append(createRow(contact));
-  }
+  };
   const formControl = (form, list, closeModal) => {
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const newContact = Object.fromEntries(formData);
-    console.log(newContact);
-    addContactPage(newContact, list);
-    addContactData(newContact);
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const newContact = Object.fromEntries(formData);
+      console.log(newContact);
+      addContactPage(newContact, list);
 
-    form.reset(); // метод формы по умолчанию для очистки,
-    // также можно навесить на кнопку в форме type='reset'
-    closeModal();
-  })
-}
+      setStorage('contacts', newContact);
+      // addContactData(newContact); больше не нужен
+
+      form.reset(); // метод формы по умолчанию для очистки,
+      // также можно навесить на кнопку в форме type='reset'
+      closeModal();
+    });
+  };
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
     const {
@@ -292,13 +366,13 @@ import {data} from "/data.js";
       btnAdd,
       formOverlay,
       form,
-      btnClose,
+      // btnClose,
       btnDel,
       thead,
     } = renderPhoneBook(app, title);
 
-    //Функционал
-    const allRow = renderContacts(list, data);
+    // Функционал
+    const allRow = renderContacts(list, getStorage('contacts'));
     const {closeModal} = modalControl(btnAdd, formOverlay);
 
     hoverRow(allRow, logo);
@@ -310,14 +384,14 @@ import {data} from "/data.js";
       if (target.textContent === 'Имя') {
         sort('name');
         list.innerHTML = '';
-        renderContacts(list, data);
+        renderContacts(list, getStorage('contacts'));
       } else if (target.textContent === 'Фамилия') {
         sort('surname');
         list.innerHTML = '';
-        renderContacts(list, data);
+        renderContacts(list, getStorage('contacts'));
       }
-    })
-    console.log();
+    });
   };
   window.phoneBookInit = init;
 }
+

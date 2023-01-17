@@ -1,4 +1,5 @@
-export const data = [
+// export отключен экспорт
+const data = [
   {
     name: 'Иван',
     surname: 'Петров',

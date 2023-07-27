@@ -1,15 +1,10 @@
-// TODO: JS-5-09
-// Избавиться от дерективы ‘use strict’
-// Применить два способа export:
-// export const ‘named’
-// export default
-//
-// Применить три способа import
-// import ‘named’ from ‘путь’
-// import {‘named’, ‘named’} from ‘путь’
-// import * as ‘named’ from ‘путь’
+// Импорт стилей
+// import './phonebook/css/normalize.min.css';
+// import './phonebook/css/bootstrap.min.css';
+// import './phonebook/css/style.css';
+import './phonebook/scss/index.scss';
 
-import controls from './modules/control.js';
+import controls from './phonebook/script/control';
 const {
   hoverRow,
   sort,
@@ -17,8 +12,8 @@ const {
   deleteControl,
   formControl,
 } = controls;
-import {renderPhoneBook, renderContacts} from './modules/render.js';
-import {getStorage} from './modules/serviceStorage.js';
+import {renderPhoneBook, renderContacts} from './phonebook/script/render';
+import {getStorage} from './phonebook/script/serviceStorage';
 
 {
   const init = (selectorApp, title) => {

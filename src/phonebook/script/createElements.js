@@ -1,3 +1,10 @@
+import image from '../img/icon.svg';
+
+const createImageLogo = () => {
+  const img = document.createElement('img');
+  img.src = image;
+  return img;
+};
 
 const createContainer = () => {
   const container = document.createElement('div');
@@ -145,6 +152,7 @@ export const createRow = ({name: firstName, surname, phone}) => {
   return tr;
 };
 export default {
+  createImageLogo,
   createHeader,
   createLogo,
   createMain,

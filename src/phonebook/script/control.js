@@ -1,5 +1,5 @@
-import {createRow} from './createElements.js';
-import * as serviceStorage from './serviceStorage.js';
+import {createRow} from './createElements';
+import * as serviceStorage from './serviceStorage';
 
 const hoverRow = (allRow, logo) => {
   const text = logo.textContent;
